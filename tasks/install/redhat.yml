@@ -1,0 +1,26 @@
+---
+
+- name: RedHat | Install apache
+  yum: >
+    name="{{ apache.package | default('httpd') }}"
+    state=latest
+
+- name: RedHat | Ensure apache is running
+  service: >
+    name="{{ apache.package | default('httpd') }}"
+    state=started
+    enabled=yes
+
+- name: RedHat | Check installed apache modules
+  command: ls
+  args:
+    chdir: /etc/httpd/modules
+  register: apache_modules_installed
+  changed_when: false
+
+- name: RedHat | Install required apache modules
+  yum: >
+    name="mod_{{item.name | replace("-","_")}}"
+    state=present
+  with_items: apache_modules
+  when: apache_modules_installed.stdout.find(item.name) == -1

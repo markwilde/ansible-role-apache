@@ -1,0 +1,26 @@
+---
+
+- name: Debian | Install apache
+  apt: >
+    name="{{ apache.package | default('apache2') }}"
+    state=latest
+
+- name: Debian | Ensure apache is running
+  service: >
+    name="{{ apache.package | default('apache2') }}"
+    state=started
+    enabled=yes
+
+- name: Debian | Check installed apache modules
+  command: ls
+  args:
+    chdir: /etc/apache2/mods-available
+  register: apache_modules_installed
+  changed_when: false
+
+- name: Debian | Install required apache modules
+  apt: >
+    name="libapache2-mod-{{item.name | replace("_","-")}}"
+    state=present
+  with_items: apache_modules
+  when: apache_modules_installed.stdout.find(item.name) == -1

@@ -1,0 +1,11 @@
+---
+
+- name: RedHat | Configure apache modules
+  lineinfile: >
+    dest=/etc/httpd/conf/httpd.conf
+    state="{{item.state | default('present')}}"
+    line="LoadModule {{item.name | replace("-","_")}}_module modules/mod_{{item.name | replace("-","_")}}.so"
+    insertafter='^LoadModule'
+  with_items: apache_modules
+  notify:
+    - restart httpd

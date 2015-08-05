@@ -1,0 +1,9 @@
+---
+
+- name: Debian | Configure apache modules
+  apache2_module: >
+    name={{item.name | replace("_","-")}}
+    state="{{item.state | default('present')}}"
+  with_items: "{{apache_modules}}"
+  notify:
+    - restart apache2
