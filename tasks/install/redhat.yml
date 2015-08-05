@@ -2,12 +2,12 @@
 
 - name: RedHat | Install apache
   yum: >
-    name="{{ apache.package | default('httpd') }}"
+    name="{{ apache_package | default('httpd') }}"
     state=latest
 
 - name: RedHat | Ensure apache is running
   service: >
-    name="{{ apache.package | default('httpd') }}"
+    name="{{ apache_package | default('httpd') }}"
     state=started
     enabled=yes
 
